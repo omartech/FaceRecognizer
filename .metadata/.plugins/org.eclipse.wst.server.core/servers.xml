@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<servers>
+  <server hostname="localhost" id="IBM WASCE v2.1 Server at localhost" inPlaceSharedLib="false" name="IBM WASCE v2.1 Server at localhost" runFromWorkspace="false" runtime-id="IBM WASCE v2.1" selectClasspathContainers="false" server-type="com.ibm.wasce.server.21" server-type-id="com.ibm.wasce.server.21" start-timeout="900" stop-timeout="30" timestamp="1">
+    <map RMIRegistry="1099" WebConnector="8080" adminID="system" adminPassword="manager" key="geronimo_server_instance_properties" logLevel="--long" maxPings="40" pingDelay="10000" pingInterval="5000" publishTimeout="900000"/>
+    <list key="modules" value0="ajm::org.eclipse.jst.jee.server:ajm::jst.ear::5.0"/>
+  </server>
+</servers>

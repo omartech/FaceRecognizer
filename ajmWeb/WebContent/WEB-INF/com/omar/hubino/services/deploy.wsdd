@@ -1,0 +1,42 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from OmerWebService WSDL service -->
+
+  <service name="OmerWeb" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://services.hubino.omar.com"/>
+      <parameter name="wsdlServiceElement" value="OmerWebService"/>
+      <parameter name="schemaQualified" value="http://services.hubino.omar.com,http://bo.hubino.omar.com"/>
+      <parameter name="wsdlServicePort" value="OmerWeb"/>
+      <parameter name="className" value="com.omar.hubino.services.OmerWebSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="OmerWeb"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+
+      <typeMapping
+        xmlns:ns="http://bo.hubino.omar.com"
+        qname="ns:DataSet"
+        type="java:com.omar.hubino.bo.DataSet"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://bo.hubino.omar.com"
+        qname="ns:ServiceResponse"
+        type="java:com.omar.hubino.bo.ServiceResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+</deployment>

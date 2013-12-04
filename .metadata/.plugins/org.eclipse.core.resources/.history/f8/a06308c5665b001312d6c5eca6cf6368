@@ -1,0 +1,234 @@
+package com.omar.hubino.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import org.apache.log4j.Logger;
+
+import com.omar.hubino.bo.FaceDistance;
+import com.omar.hubino.bo.OmarResponse;
+import com.omar.hubino.bo.OpenBrResponse;
+import com.omar.hubino.bo.ServiceResponse;
+import com.omar.hubino.util.DBUtil;
+
+public class OmarDao {
+	private static final Logger LOGGER = Logger.getLogger(OmarDao.class);
+	private static Connection conn = null;
+	private static PreparedStatement pstmt = null;
+	private static ResultSet rst = null;
+	private static OmarResponse omarResponse = null;
+	
+	private static String CHECK_ENROLLMENT_STATUS = "SELECT CUST_ENROLLMENT_IN FROM cust_info WHERE CUST_ID = ?";
+	
+	private static String CUSTOMER_CHECK = "SELECT COUNT(*) FROM cust_info WHERE CUST_ID = ?";
+	
+	private static String ADD_CUSTOMER = "INSERT INTO cust_info(CUST_ID, CUST_ENROLLMENT_IN, INSERTED_DT, RECORD_STATUS) VALUES(?,?,now(),'Y')";
+	
+	private static String ADD_TRACKING = "INSERT INTO cust_tracking_info(CUST_ID, ENROLL_VALID_TYPE, TRACKING_GAL_PATH, TRACKING_IMG_PATH, INSERTED_DT, RECORD_STATUS) VALUES(?,?,?,?,now(),'Y')";
+	
+	private static String ADD_TRACKING_IMAGE = "INSERT INTO tracking_img_info(TRACKING_ID, TRACKING_IMG_PATH, TRACKING_IMG_STATUS, INSERTED_DT, RECORD_STATUS) VALUES(?,?,?,now(),'Y')";
+
+	private static String LAST_INSERT_ID = "SELECT LAST_INSERT_ID()";
+	
+	private static String UPDATE_ENROLLMENT = "UPDATE cust_info SET CUST_ENROLLMENT_IN = ?, UPDATED_DT = now() WHERE CUST_ID = ?";
+	
+	private static String UPDATE_TRACKING = "UPDATE cust_tracking_info SET STATUS_IN = ?, ERROR_CODE = ?, ERROR_DESC = ?, UPDATED_DT = now() WHERE TRACKING_ID = ?";
+	
+	private static String UPDATE_TRACKING_IMAGE = "UPDATE tracking_img_info SET TRACKING_IMG_STATUS = ?, UPDATED_DT = now() WHERE TRACKING_IMG_PATH = ?";
+	
+	private static String INSERT_SCORE = "INSERT INTO tracking_score(TRACKING_ID, SRC_PATH, DST_PATH, SCORE_VALUE, INSERTED_DT, RECORD_STATUS) VALUES(?,?,?,?,now(),'Y')";
+	
+	private static String GET_GAL_PATH = "SELECT TRACKING_GAL_PATH FROM cust_tracking_info WHERE CUST_ID = ?";
+	
+	public static OmarResponse checkEnrollment(String userId, String type) {
+		LOGGER.info("OmarDao - checkEnrollment starts");
+		try {
+			omarResponse = new OmarResponse();
+			conn = DBUtil.getInstance().getConnection();
+			
+			int custCount = DBUtil.getInstance().getRowCount(CUSTOMER_CHECK, new Object[]{userId}, conn);			
+			if(type.equals("E"))
+			{
+				if(custCount == 0)
+				{
+					pstmt = conn.prepareStatement(ADD_CUSTOMER);
+					pstmt.setString(1, userId);
+					pstmt.setString(2, "N");
+					pstmt.executeUpdate();
+					omarResponse.setResult(true);
+					omarResponse.setMessage("Valid user");
+				}
+				else
+				{
+					String enrollStatus = DBUtil.getInstance().getValue(CHECK_ENROLLMENT_STATUS, new Object[]{userId}, conn);
+					if(enrollStatus.equals("Y"))
+					{
+						omarResponse.setResult(false);
+						omarResponse.setMessage("Enrollment already completed");
+					}
+					else
+					{
+						omarResponse.setResult(true);
+						omarResponse.setMessage("Enrollment not completed");
+					}
+				}				
+			}
+			else
+			{
+				if(custCount == 0)
+				{
+					omarResponse.setResult(false);
+					omarResponse.setMessage("Please complete the Enrollment first");
+				}
+				else
+				{
+					String enrollStatus = DBUtil.getInstance().getValue(CHECK_ENROLLMENT_STATUS, new Object[]{userId}, conn);
+					if(enrollStatus.equals("Y"))
+					{
+						omarResponse.setResult(true);
+						omarResponse.setMessage("Valid user");
+					}
+					else
+					{
+						omarResponse.setResult(false);
+						omarResponse.setMessage("Please complete the Enrollment first");
+					}
+				}	
+			}
+		} catch (Exception e) {
+			omarResponse.setResult(false);
+			omarResponse.setMessage(e.getMessage());
+			LOGGER.error("Error::"+e.getMessage());
+		} finally {
+			try {
+				if(conn != null)
+					conn.close();
+				if(pstmt != null)
+					pstmt.close();
+				if(rst != null)
+					rst.close();
+			} catch (Exception e) {
+				LOGGER.error("Exception::"+e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		return omarResponse;
+	}
+
+	public static OmarResponse storeImages(String userId, String[] imagePathArr, String galPath, String imagePath, String type) {
+		LOGGER.info("OmarDao - storeImages starts");
+		try {
+			omarResponse = new OmarResponse();
+			conn = DBUtil.getInstance().getConnection();
+			
+			pstmt = conn.prepareStatement(ADD_TRACKING);
+			pstmt.setString(1, userId);
+			pstmt.setString(2, type);
+			pstmt.setString(3, galPath);
+			pstmt.setString(4, imagePath);
+			pstmt.executeUpdate();
+			int trackingId = DBUtil.getInstance().getValueInt(LAST_INSERT_ID,conn);			
+			pstmt.close();
+			
+			for(int i=0; i<imagePathArr.length;i++)
+			{
+				pstmt = conn.prepareStatement(ADD_TRACKING_IMAGE);
+				pstmt.setInt(1, trackingId);
+				pstmt.setString(2, imagePathArr[i]);
+				pstmt.setString(3, "Y");
+				pstmt.executeUpdate();
+				pstmt.close();
+			}
+			omarResponse.setTrackingId(trackingId);
+			if(type.equals("E"))
+				omarResponse.setGalPath(galPath);
+			else
+				omarResponse.setGalPath(DBUtil.getInstance().getValue(GET_GAL_PATH, new Object[]{userId}, conn));
+			omarResponse.setImageArr(imagePathArr);
+			omarResponse.setImagePath(imagePath);
+			omarResponse.setResult(true);
+			omarResponse.setMessage("success");
+		} catch (Exception e) {
+			omarResponse.setResult(false);
+			omarResponse.setMessage(e.getMessage());
+			LOGGER.error("Error::"+e.getMessage());
+		} finally {
+			try {
+				if(conn != null)
+					conn.close();
+				if(pstmt != null)
+					pstmt.close();
+				if(rst != null)
+					rst.close();
+			} catch (Exception e) {
+				LOGGER.error("Exception::"+e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		return omarResponse;
+	}
+
+	public static void updateImageStatus(OpenBrResponse openBrResponse,	String userId, String type, int trackingId) {
+		LOGGER.info("OmarDao - updateImageStatus starts");
+		try {
+			conn = DBUtil.getInstance().getConnection();
+			
+			if(openBrResponse.isResult())
+				DBUtil.getInstance().executeUpdate(UPDATE_TRACKING,new Object[]{"S", trackingId, openBrResponse.getErrorCode(), "Success"},conn);
+			else
+				DBUtil.getInstance().executeUpdate(UPDATE_TRACKING,new Object[]{"F", trackingId, openBrResponse.getErrorCode(), "Failure"},conn);
+			
+			if(openBrResponse.getFailCount() != 0)
+			{
+				for(int i=0;i<openBrResponse.getFailCount();i++)
+				{
+					DBUtil.getInstance().executeUpdate(UPDATE_TRACKING_IMAGE,new Object[]{"N", openBrResponse.getFaultImagePath()[i]},conn);
+				}
+			}
+			if(type.equals("E"))
+			{
+				if(openBrResponse.getFailCount() == 0)
+					DBUtil.getInstance().executeUpdate(UPDATE_ENROLLMENT,new Object[]{"Y", userId},conn);
+			}
+			if(type.equals("V") && openBrResponse.isResult())
+			{
+				FaceDistance[] faceDist = openBrResponse.getDistances();
+				for(int i=0;i<faceDist.length;i++)
+				{
+					DBUtil.getInstance().executeUpdate(INSERT_SCORE,new Object[]{trackingId, faceDist[i].getSourceImage(), faceDist[i].getDstImage(), faceDist[i].getDistance()},conn);
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.error("Error::"+e.getMessage());
+		} finally {
+			try {
+				if(conn != null)
+					conn.close();
+			} catch (Exception e) {
+				LOGGER.error("Exception::"+e.getMessage());
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static ServiceResponse customerStatusUpdate(String userId, String userStatus) {
+		LOGGER.info("OmarDao - customerStatusUpdate starts");
+		ServiceResponse serviceResponse = new ServiceResponse();
+		try {
+			conn = DBUtil.getInstance().getConnection();
+		} catch (Exception e) {
+			LOGGER.error("Error::"+e.getMessage());
+		} finally {
+			try {
+				if(conn != null)
+					conn.close();
+			} catch (Exception e) {
+				LOGGER.error("Exception::"+e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		return serviceResponse;
+	}
+
+}

@@ -1,0 +1,8 @@
+#Mon Dec 02 20:40:31 IST 2013
+eclipse.preferences.version=1
+encoding//srv/com/omar/hubino/bo/DataSet.java=UTF-8
+encoding//srv/com/omar/hubino/bo/ServiceResponse.java=UTF-8
+encoding//srv/com/omar/hubino/services/OmerWeb.java=UTF-8
+encoding//srv/com/omar/hubino/services/OmerWebSoapBindingImpl.java=UTF-8
+encoding//srv/com/omar/hubino/services/OmerWebSoapBindingSkeleton.java=UTF-8
+encoding//srv/com/omar/hubino/services/OmerWebSoapBindingStub.java=UTF-8

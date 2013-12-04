@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://services.hubino.omar.com" xmlns:intf="http://services.hubino.omar.com" xmlns:tns1="http://bo.hubino.omar.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://services.hubino.omar.com">
+	<!--WSDL created by Apache Axis version: 1.4 Built on Apr 22, 2006 (06:55:48 
+		PDT) -->
+	<wsdl:types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://services.hubino.omar.com">
+			<import namespace="http://bo.hubino.omar.com"/>
+			<element name="prepareMetadata">
+				<complexType>
+					<sequence>
+						<element maxOccurs="unbounded" name="dataSet" type="tns1:DataSet"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="prepareMetadataResponse">
+				<complexType>
+					<sequence>
+						<element name="prepareMetadataReturn" type="tns1:ServiceResponse"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="validateFace">
+				<complexType>
+					<sequence>
+						<element maxOccurs="unbounded" name="dataSet" type="tns1:DataSet"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="validateFaceResponse">
+				<complexType>
+					<sequence>
+						<element name="validateFaceReturn" type="tns1:ServiceResponse"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="initiateFaceEngine">
+				<complexType>
+					<sequence>
+						<element maxOccurs="unbounded" name="images" type="xsd:string"/>
+						<element name="userId" type="xsd:string"/>
+						<element name="serviceType" type="xsd:string"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="initiateFaceEngineResponse">
+				<complexType>
+					<sequence>
+						<element name="initiateFaceEngineReturn" type="tns1:ServiceResponse"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="customerStatusUpdate">
+				<complexType>
+					<sequence>
+						<element name="userId" type="xsd:string"/>
+						<element name="userStatus" type="xsd:string"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="customerStatusUpdateResponse">
+				<complexType>
+					<sequence>
+						<element name="customerStatusUpdateReturn" type="tns1:ServiceResponse"/>
+					</sequence>
+				</complexType>
+			</element>
+		</schema>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://bo.hubino.omar.com">
+			<complexType name="DataSet">
+				<sequence>
+					<element name="data" nillable="true" type="xsd:base64Binary"/>
+					<element name="userId" nillable="true" type="xsd:string"/>
+				</sequence>
+			</complexType>
+			<complexType name="ServiceResponse">
+				<sequence>
+					<element name="message" nillable="true" type="xsd:string"/>
+					<element name="result" type="xsd:boolean"/>
+					<element name="FaceAuthKey" nillable="true" type="xsd:string"/>
+				</sequence>
+			</complexType>
+		</schema>
+	</wsdl:types>
+
+	<wsdl:message name="customerStatusUpdateResponse">
+
+		<wsdl:part element="impl:customerStatusUpdateResponse" name="parameters">
+
+		</wsdl:part>
+
+	</wsdl:message>
+
+	<wsdl:message name="customerStatusUpdateRequest">
+
+		<wsdl:part element="impl:customerStatusUpdate" name="parameters">
+
+		</wsdl:part>
+
+	</wsdl:message>
+	
+	<wsdl:message name="initiateFaceEngineResponse">
+
+		<wsdl:part element="impl:initiateFaceEngineResponse" name="parameters">
+
+		</wsdl:part>
+
+	</wsdl:message>
+
+	<wsdl:message name="initiateFaceEngineRequest">
+
+		<wsdl:part element="impl:initiateFaceEngine" name="parameters">
+
+		</wsdl:part>
+
+	</wsdl:message>
+
+	<wsdl:message name="prepareMetadataRequest">
+
+		<wsdl:part element="impl:prepareMetadata" name="parameters">
+
+		</wsdl:part>
+
+	</wsdl:message>
+
+	<wsdl:message name="validateFaceRequest">
+
+		<wsdl:part element="impl:validateFace" name="parameters">
+
+		</wsdl:part>
+
+	</wsdl:message>
+
+	<wsdl:message name="validateFaceResponse">
+
+		<wsdl:part element="impl:validateFaceResponse" name="parameters">
+
+		</wsdl:part>
+
+	</wsdl:message>
+
+	<wsdl:message name="prepareMetadataResponse">
+
+		<wsdl:part element="impl:prepareMetadataResponse" name="parameters">
+
+		</wsdl:part>
+
+	</wsdl:message>
+
+	<wsdl:portType name="OmerWeb">
+
+		<wsdl:operation name="prepareMetadata">
+
+			<wsdl:input message="impl:prepareMetadataRequest" name="prepareMetadataRequest">
+
+			</wsdl:input>
+
+			<wsdl:output message="impl:prepareMetadataResponse" name="prepareMetadataResponse">
+
+			</wsdl:output>
+
+		</wsdl:operation>
+
+		<wsdl:operation name="validateFace">
+
+			<wsdl:input message="impl:validateFaceRequest" name="validateFaceRequest">
+
+			</wsdl:input>
+
+			<wsdl:output message="impl:validateFaceResponse" name="validateFaceResponse">
+
+			</wsdl:output>
+
+		</wsdl:operation>
+
+		<wsdl:operation name="initiateFaceEngine">
+
+			<wsdl:input message="impl:initiateFaceEngineRequest" name="initiateFaceEngineRequest">
+
+			</wsdl:input>
+
+			<wsdl:output message="impl:initiateFaceEngineResponse" name="initiateFaceEngineResponse">
+
+			</wsdl:output>
+
+		</wsdl:operation>
+		
+		<wsdl:operation name="customerStatusUpdate">
+
+			<wsdl:input message="impl:customerStatusUpdateRequest" name="customerStatusUpdateRequest">
+
+			</wsdl:input>
+
+			<wsdl:output message="impl:customerStatusUpdateResponse" name="customerStatusUpdateResponse">
+
+			</wsdl:output>
+
+		</wsdl:operation>
+
+	</wsdl:portType>
+
+	<wsdl:binding name="OmerWebSoapBinding" type="impl:OmerWeb">
+
+		<wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+		<wsdl:operation name="prepareMetadata">
+
+			<wsdlsoap:operation soapAction=""/>
+
+			<wsdl:input name="prepareMetadataRequest">
+
+				<wsdlsoap:body use="literal"/>
+
+			</wsdl:input>
+
+			<wsdl:output name="prepareMetadataResponse">
+
+				<wsdlsoap:body use="literal"/>
+
+			</wsdl:output>
+
+		</wsdl:operation>
+
+		<wsdl:operation name="validateFace">
+
+			<wsdlsoap:operation soapAction=""/>
+
+			<wsdl:input name="validateFaceRequest">
+
+				<wsdlsoap:body use="literal"/>
+
+			</wsdl:input>
+
+			<wsdl:output name="validateFaceResponse">
+
+				<wsdlsoap:body use="literal"/>
+
+			</wsdl:output>
+
+		</wsdl:operation>
+
+		<wsdl:operation name="initiateFaceEngine">
+
+			<wsdlsoap:operation soapAction=""/>
+
+			<wsdl:input name="initiateFaceEngineRequest">
+
+				<wsdlsoap:body use="literal"/>
+
+			</wsdl:input>
+
+			<wsdl:output name="initiateFaceEngineResponse">
+
+				<wsdlsoap:body use="literal"/>
+
+			</wsdl:output>
+
+		</wsdl:operation>
+		
+		<wsdl:operation name="customerStatusUpdate">
+
+			<wsdlsoap:operation soapAction=""/>
+
+			<wsdl:input name="customerStatusUpdateRequest">
+
+				<wsdlsoap:body use="literal"/>
+
+			</wsdl:input>
+
+			<wsdl:output name="customerStatusUpdateResponse">
+
+				<wsdlsoap:body use="literal"/>
+
+			</wsdl:output>
+
+		</wsdl:operation>
+
+	</wsdl:binding>
+
+	<wsdl:service name="OmerWebService">
+
+		<wsdl:port binding="impl:OmerWebSoapBinding" name="OmerWeb">
+
+			<wsdlsoap:address location="http://localhost:8080/ajmWeb/services/OmerWeb"/>
+
+		</wsdl:port>
+
+	</wsdl:service>
+
+</wsdl:definitions>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faceted-project>
+  <fixed facet="jst.ear"/>
+  <installed facet="jst.ear" version="5.0"/>
+  <installed facet="com.ibm.wasce.facet" version="1.2"/>
+</faceted-project>

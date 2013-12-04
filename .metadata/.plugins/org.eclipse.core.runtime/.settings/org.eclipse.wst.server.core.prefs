@@ -1,0 +1,3 @@
+#Mon Dec 02 20:25:43 IST 2013
+runtimes=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<runtimes>\r\n  <runtime id\="IBM WASCE v2.1" location\="E\:/Wasce_Server/wasce_ibm150sdk_setup-2.1.1.4-x86_64win" name\="IBM WASCE v2.1" runtime-type-id\="com.ibm.wasce.runtime.21" timestamp\="0" vm-install-id\="1385996108977" vm-install-type-id\="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType">\r\n    <map key\="geronimo_server_instance_properties" serverRootDirectory\="E\:\\Wasce_Server\\wasce_ibm150sdk_setup-2.1.1.4-x86_64win"/>\r\n  </runtime>\r\n</runtimes>\r\n
+eclipse.preferences.version=1

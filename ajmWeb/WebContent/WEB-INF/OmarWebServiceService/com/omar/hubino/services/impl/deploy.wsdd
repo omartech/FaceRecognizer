@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><!-- Use this file to deploy some handlers/chains and services      --><!-- Two ways to do this:                                           --><!--   java org.apache.axis.client.AdminClient deploy.wsdd          --><!--      after the axis server is running                          --><!-- or                                                             --><!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   --><!--      from the same directory that the Axis engine runs         --><deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from OmarWebServiceService WSDL service -->
+
+  <service name="OmarWebService" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://impl.services.hubino.omar.com"/>
+      <parameter name="wsdlServiceElement" value="OmarWebServiceService"/>
+      <parameter name="schemaQualified" value="http://impl.services.hubino.omar.com,http://bo.hubino.omar.com"/>
+      <parameter name="wsdlServicePort" value="OmarWebService"/>
+      <parameter name="className" value="com.omar.hubino.services.impl.OmarWebService"/>
+      <parameter name="wsdlPortType" value="OmarWebService"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation xmlns:operNS="http://impl.services.hubino.omar.com" xmlns:retNS="http://impl.services.hubino.omar.com" xmlns:rtns="http://bo.hubino.omar.com" name="prepareMetadata" qname="operNS:prepareMetadata" returnQName="retNS:prepareMetadataReturn" returnType="rtns:ServiceResponse" soapAction="">
+        <parameter xmlns:pns="http://impl.services.hubino.omar.com" xmlns:tns="http://bo.hubino.omar.com" qname="pns:dataSet" type="tns:DataSet"/>
+      </operation>
+      <operation xmlns:operNS="http://impl.services.hubino.omar.com" xmlns:retNS="http://impl.services.hubino.omar.com" xmlns:rtns="http://bo.hubino.omar.com" name="validateFace" qname="operNS:validateFace" returnQName="retNS:validateFaceReturn" returnType="rtns:ServiceResponse" soapAction="">
+        <parameter xmlns:pns="http://impl.services.hubino.omar.com" xmlns:tns="http://bo.hubino.omar.com" qname="pns:dataSet" type="tns:DataSet"/>
+      </operation>
+      <parameter name="allowedMethods" value="prepareMetadata validateFace"/>
+
+      <typeMapping xmlns:ns="http://bo.hubino.omar.com" qname="ns:DataSet" type="java:com.omar.hubino.bo.DataSet" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle=""/>
+      <typeMapping xmlns:ns="http://bo.hubino.omar.com" qname="ns:ServiceResponse" type="java:com.omar.hubino.bo.ServiceResponse" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle=""/>
+  </service>
+</deployment>

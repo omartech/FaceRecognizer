@@ -1,0 +1,79 @@
+package com.omar.hubino.model;
+
+import java.io.File;
+
+import org.apache.log4j.Logger;
+
+import com.omar.hubino.Constants;
+import com.omar.hubino.bo.DataSet;
+import com.omar.hubino.bo.OmarResponse;
+import com.omar.hubino.bo.OpenBrResponse;
+import com.omar.hubino.bo.ServiceResponse;
+import com.omar.hubino.dao.OmarDao;
+import com.omar.hubino.util.ConfigProperties;
+import com.omar.hubino.util.FileNameFormatter;
+import com.omar.hubino.util.FileUtil;
+
+public class OmarModel {
+	private static final Logger LOGGER = Logger.getLogger(OmarModel.class);
+
+	public static OmarResponse checkEnrollment(String userId, String type) {
+		LOGGER.info("OmarModel - checkEnrollment starts");
+		return OmarDao.checkEnrollment(userId, type);
+	}
+
+	public static OmarResponse storeImages(DataSet[] dataSet, String type) {
+		LOGGER.info("OmarModel - storeImages starts");
+		
+		ConfigProperties objProbs = new ConfigProperties(Constants.CONFIG_PROPERTIES);
+
+		String userId = dataSet[0].getUserId();
+
+		LOGGER.info("User ID :: " + userId);
+
+		LOGGER.info("User ID :: " + dataSet.length);
+
+		String trainningPath = objProbs.getPropertyValues(Constants.FILER_PATH)	+ File.separator + userId;
+
+		LOGGER.info("TrainningPath :: " + trainningPath);
+
+		String imagePath = null;
+		
+		if(type.equals("E"))
+			imagePath = trainningPath + File.separator + Constants.FILER_SRC + File.separator + FileNameFormatter.getNewDirectoryName();
+		else
+			imagePath = trainningPath + File.separator + Constants.FILER_DST + File.separator + FileNameFormatter.getNewDirectoryName();
+
+		LOGGER.info("ImagePath :: " + imagePath);
+		
+		String[] imagePathArr = new String[dataSet.length];
+
+		try {
+			int count = 0;
+			for (DataSet bioData : dataSet) {
+				String fileName = imagePath + File.separator + FileUtil.writeToFile(bioData.getData(), imagePath);
+				imagePathArr[count] = fileName;
+				LOGGER.info("count :: " + count);
+				count++;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		String galPath = trainningPath + File.separator + userId + "_" + Constants.FILER_USER_GAL + Constants.FILER_USER_GAL_FILE_EXT;
+		
+		LOGGER.info("GalPath :: " + galPath);
+		
+		return OmarDao.storeImages(dataSet[0].getUserId(), imagePathArr, galPath, imagePath, type);
+	}
+
+	public static void updateImageStatus(OpenBrResponse openBrResponse,	String userId, String type, int trackingId) {
+		LOGGER.info("OmarModel - updateImageStatus starts");
+		OmarDao.updateImageStatus(openBrResponse, userId, type, trackingId);
+	}
+
+	public static ServiceResponse customerStatusUpdate(String userId, String userStatus) {
+		LOGGER.info("OmarModel - customerStatusUpdate starts");
+		return OmarDao.customerStatusUpdate(userId, userStatus);
+	}
+}
